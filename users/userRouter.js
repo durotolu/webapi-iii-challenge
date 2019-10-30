@@ -43,7 +43,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', validateUserId, (req, res) => {
-    res.json(req.user);
+    res.status(200).json(req.user);
 });
 
 router.get('/:id/posts', validateUserId, (req, res) => {
@@ -73,7 +73,7 @@ router.delete('/:id', validateUserId, (req, res) => {
 router.put('/:id', [validateUserId, validateUser], (req, res) => {
     User.update(req.user.id, req.body)
         .then(user => {
-            res.status(200).json({ message: `removed ${user} user(s)` });
+            res.status(200).json({ message: `edited ${user} user(s)` });
         })
         .catch(error => {
             res.status(500).json({
