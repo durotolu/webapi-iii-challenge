@@ -4,7 +4,7 @@ const router = express.Router();
 const User = require('./userDb')
 
 router.post('/', (req, res) => {
-    
+
 });
 
 router.post('/:id/posts', (req, res) => {
@@ -12,19 +12,35 @@ router.post('/:id/posts', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-
+    User.find(req.query)
+        .then(user => {
+            res.status(200).json(user);
+        })
+        .catch(error => {
+            res.status(500).json({
+                'Error retrieving user' : error.message
+            });
+        });
 });
 
-router.get('/:id', (req, res) => {
-
+router.get('/:id', validateUserId, (req, res) => {
+    res.json(req.user);
 });
 
-router.get('/:id/posts', (req, res) => {
-
+router.get('/:id/posts', validateUserId, (req, res) => {
+    User.getUserPosts(req.params.id)
+        .then(posts => {
+            res.status(200).json(posts);
+        })
+        .catch(error => {
+            res.status(500).json({
+                'Error getting posts of user': error.message
+            });
+        });
 });
 
 router.delete('/:id', (req, res) => {
-
+    
 });
 
 router.put('/:id', (req, res) => {
