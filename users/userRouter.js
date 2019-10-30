@@ -2,17 +2,36 @@ const express = require('express');
 
 const router = express.Router();
 const User = require('./userDb')
+const Post = require('../posts/postDb')
 
-router.post('/', (req, res) => {
-
+router.post('/', validateUser, (req, res) => {
+    User.insert(req.body)
+        .then(user => {
+            res.status(201).json(user);
+        })
+        .catch(error => {
+            res.status(500).json({
+                'Error adding user' : error.message
+            })
+        })
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', [validatePost, validateUserId], (req, res) => {
+    const postInfo = { ...req.body, user_id: req.params.id }
 
+    Post.insert(postInfo)
+        .then(post => {
+            res.status(210).json(post);
+        })
+        .catch(error => {
+            res.status(500).json({
+                'error posting to user': error.message
+            });
+        });
 });
 
 router.get('/', (req, res) => {
-    User.find(req.query)
+    User.get(req.query)
         .then(user => {
             res.status(200).json(user);
         })
@@ -40,7 +59,7 @@ router.get('/:id/posts', validateUserId, (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-    
+
 });
 
 router.put('/:id', (req, res) => {
